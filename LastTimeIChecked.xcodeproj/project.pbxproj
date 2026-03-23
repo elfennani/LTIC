@@ -54,8 +54,10 @@
 		D9E538012F6F7374003BB076 /* Exceptions for "LastTimeIChecked" folder in "TimerExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Assets.xcassets,
 				Data/Container.swift,
 				Data/Models/Cycle.swift,
+				"Extensions/Color+Brand.swift",
 			);
 			target = D9C64CFD2F6EF6BE007A989C /* TimerExtension */;
 		};

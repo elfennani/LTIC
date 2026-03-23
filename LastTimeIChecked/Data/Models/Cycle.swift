@@ -30,24 +30,26 @@ class Cycle: @unchecked Sendable{
     }
 }
 
-enum CyclePeriodType : Codable, Sendable{
+enum CyclePeriodType : Codable, Sendable, Identifiable, CaseIterable{
     case days
     case weeks
     case months
     case years
+    
+    var id: String { label() }
 }
 
 extension CyclePeriodType{
-    func label() -> String {
+    func label(plural: Bool = true) -> String {
         switch self {
         case .days:
-            return "days"
+            return "day" + (plural ? "s" : "")
         case .weeks:
-            return "weeks"
+            return "week" + (plural ? "s" : "")
         case .months:
-            return "months"
+            return "month" + (plural ? "s" : "")
         case .years:
-            return "years"
+            return "year" + (plural ? "s" : "")
         }
     }
 }

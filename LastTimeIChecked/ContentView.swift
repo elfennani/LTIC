@@ -15,5 +15,6 @@ struct ContentView: View {
         NavigationStack{
             CycleListScreen()
         }
+        .tint(.primary)
     }
 }

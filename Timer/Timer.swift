@@ -81,7 +81,7 @@ struct TimerEntryView : View {
             ZStack(alignment: .bottom){
                 Canvas{ context, size in
                     let radius = min(size.width, size.height) - 16
-                    let lineWidth = 16
+                    let lineWidth: CGFloat = 16
                     
                     let arcBackgroundPath = Path{ path in
                         path.addRelativeArc(
@@ -102,14 +102,20 @@ struct TimerEntryView : View {
                     
                     context.stroke(
                         arcBackgroundPath,
-                        with: .color(.gray.opacity(0.5)),
-                        lineWidth: 16,
+                        with: .color(.primaryDark),
+                        style: .init(
+                            lineWidth: lineWidth,
+                            lineCap: .round
+                        )
                     )
                     
                     context.stroke(
                         arcValuePath,
                         with: .color(.primary),
-                        lineWidth: 16
+                        style: .init(
+                            lineWidth: lineWidth,
+                            lineCap: .round
+                        )
                     )
                     
                     let arrow = Path { path in
@@ -145,12 +151,14 @@ struct Timer: Widget {
         ) { entry in
             if #available(iOS 17.0, *) {
                 TimerEntryView(entry: entry)
-                    .containerBackground(.fill.tertiary, for: .widget)
+                    .containerBackground(.widgetBackground, for: .widget)
+                    .foregroundColor(.widgetForeground)
                     .modelContainer(sharedModelContainer)
             } else {
                 TimerEntryView(entry: entry)
                     .padding()
-                    .background()
+                    .background(.widgetBackground)
+                    .foregroundStyle(.widgetForeground)
                     .modelContainer(sharedModelContainer)
             }
         }
