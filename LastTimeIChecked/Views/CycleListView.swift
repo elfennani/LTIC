@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 
-struct CycleListScreen: View {
+struct CycleListView: View {
     @Query(sort: \Cycle.createdAt) var cycles: [Cycle]
     @State var newCycleSheet: Bool = false
     
@@ -25,12 +25,12 @@ struct CycleListScreen: View {
             }
         }
         .sheet(isPresented: $newCycleSheet){
-            CreateCycleScreen(
+            CreateCycleView(
                 sheetOpen: $newCycleSheet
             )
         }
         .navigationDestination(for: Cycle.self){ cycle in
-            CycleDetail(cycle: cycle)
+            CycleDetailView(cycle: cycle)
         }
     }
 }

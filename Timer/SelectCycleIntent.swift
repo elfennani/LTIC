@@ -42,6 +42,7 @@ struct CycleEntity: AppEntity {
     static let examples: [CycleEntity] = [
         Cycle(
             name: "Morning Workout",
+            icon: "house",
             period: 1,
             periodType: .days,
             startsAt: Date(),
@@ -50,6 +51,7 @@ struct CycleEntity: AppEntity {
         ),
         Cycle(
             name: "Weekly Team Meeting",
+            icon: "house",
             period: 1,
             periodType: .weeks,
             startsAt: Date(),
@@ -58,6 +60,7 @@ struct CycleEntity: AppEntity {
         ),
         Cycle(
             name: "Monthly Report",
+            icon: "house",
             period: 1,
             periodType: .months,
             startsAt: Date(),

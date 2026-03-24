@@ -14,6 +14,7 @@ struct Provider: AppIntentTimelineProvider {
         return CycleTimelineEntry(
             date: Date(),
             id: UUID(),
+            icon: "leaf",
             percentage: 0.6,
             label: "In 2 days",
             name: "Watering plants"
@@ -24,6 +25,7 @@ struct Provider: AppIntentTimelineProvider {
         return CycleTimelineEntry(
             date: Date(),
             id: UUID(),
+            icon: "leaf",
             percentage: 0.6,
             label: "In 2 days",
             name: "Watering plants"
@@ -50,8 +52,9 @@ struct Provider: AppIntentTimelineProvider {
             let entry = CycleTimelineEntry(
                 date: date,
                 id: entryDetails.id,
+                icon: cycle.icon,
                 percentage: percentage,
-                label: "In \(distance / 86400) days",
+                label: "In \(durationTillNext / 86400) days",
                 name: cycle.name
             )
             
@@ -66,6 +69,7 @@ struct Provider: AppIntentTimelineProvider {
 struct CycleTimelineEntry: TimelineEntry {
     let date: Date
     let id: UUID
+    let icon: String
     let percentage: Float
     let label: String
     let name: String
@@ -132,8 +136,8 @@ struct TimerEntryView : View {
                     
                     context.fill(arrow, with: .color(.primary))
                 }
-                Text(entry.percentage.formatted(.percent.precision(.fractionLength(0))))
-                    .font(.title2)
+                Image(systemName: entry.icon)
+                    .imageScale(.large)
             }.padding(8)
             Text("\(entry.label)").font(.caption2)
         }
@@ -174,6 +178,7 @@ struct Timer: Widget {
     CycleTimelineEntry(
         date: Date(),
         id: UUID(),
+        icon: "leaf",
         percentage: 0.25,
         label: "In 3 days",
         name: "Workout"
@@ -182,6 +187,7 @@ struct Timer: Widget {
     CycleTimelineEntry(
         date: Date().addingTimeInterval(3600), // +1 hour
         id: UUID(),
+        icon: "leaf",
         percentage: 0.75,
         label: "In 6 hours",
         name: "Study Session"

@@ -6,7 +6,7 @@
 //
 import SwiftUI
 
-struct CycleDetail: View {
+struct CycleDetailView: View {
     let cycle: Cycle
     
     var body: some View {

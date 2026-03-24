@@ -8,18 +8,6 @@
 import SwiftUI
 import SwiftData
 
-struct PressableButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .padding(.horizontal)
-            .frame(height: 36)
-            .background(Color.primary)
-            .cornerRadius(10)
-            .foregroundColor(.white)
-            .opacity(configuration.isPressed ? 0.5 : 1.0) // whole button fades
-    }
-}
-
 struct AppTextFieldStyle: TextFieldStyle {
     func _body(configuration: TextField<Self._Label>) -> some View {
         configuration
@@ -32,7 +20,7 @@ struct AppTextFieldStyle: TextFieldStyle {
 }
 
 
-struct CreateCycleScreen: View {
+struct CreateCycleView: View {
     @Environment(\.modelContext) var modelContext
     
     @Binding var sheetOpen: Bool
@@ -43,9 +31,24 @@ struct CreateCycleScreen: View {
     @State var repeats: Bool = true
     @State var repeatFromLastCompleted = true
     @State var name: String = ""
-    @State var showDatePicker = false
+    @State var icon: String = "house"
     
+    @State var showDatePicker = false
+    @State var showIconPicker = false
     @State var error: String?
+    
+    private let icons: [String] = [
+        "house",
+        "person",
+        "gear",
+        "bell",
+        "heart",
+        "star",
+        "bookmark",
+        "message",
+        "calendar",
+        "camera"
+    ]
     
     @MainActor
     func save() {
@@ -61,6 +64,7 @@ struct CreateCycleScreen: View {
         
         let cycle = Cycle(
             name: name,
+            icon: icon,
             period: duration,
             periodType: type,
             startsAt: startsAt,
@@ -126,13 +130,7 @@ struct CreateCycleScreen: View {
                     .lineLimit(1)
                     .fontDesign(.monospaced)
                 }
-                .font(.system(size: 14, weight: .bold))
-                .keyboardType(.numberPad)
-                .padding(.horizontal)
-                .frame(height: 36)
-                .background(.surface)
-                .foregroundStyle(Color.foreground)
-                .cornerRadius(10)
+                .buttonStyle(.secondary(height: 36))
                 .sheet(isPresented: $showDatePicker){
                     DatePicker(
                         "In",
@@ -142,13 +140,15 @@ struct CreateCycleScreen: View {
                     .datePickerStyle(.wheel)
                     .labelsHidden()
                 }
+                
                 Button(action: { startsAt = Date() }){
                     Text("NOW")
                         .lineLimit(1)
                         .font(.system(size: 14, weight: .bold))
                             
                 }
-                .buttonStyle(PressableButtonStyle())
+                .frame(height: 36)
+                .buttonStyle(.primary(height: 36))
                     
                     
                 Spacer()
@@ -158,16 +158,60 @@ struct CreateCycleScreen: View {
                 Toggle("Repeats", isOn: $repeats)
                     .labelsHidden()
             }
+            
+            Divider()
+            
+            Text("Repeating from")
+                .font(.callout.bold())
+            
+            Picker("Repeat from", selection: $repeatFromLastCompleted){
+                Text("Last Completion").tag(true)
+                Text("Fixed Interval (\(duration) \(type.label()))")
+                    .tag(false)
+            }.frame(maxWidth: .infinity)
+                .pickerStyle(.palette)
                 
             Divider()
                 
             Text("Customize")
                 .font(.callout.bold())
                 
-            TextField("Name", text: $name)
-                .textFieldStyle(AppTextFieldStyle())
+            HStack {
+                TextField("Name", text: $name)
+                    .textFieldStyle(AppTextFieldStyle())
+                    .frame(width: 190)
+                
+                Spacer()
+                
+                Button(action: { showIconPicker = true }){
+                    HStack{
+                        Image(systemName: icon)
+                        Text(icon.capitalized)
+                    }
+                }
+                .font(.system(size: 14, weight: .bold))
+                .buttonStyle(.primary(height: 36))
+                .sheet(isPresented: $showIconPicker){
+                    LazyVGrid(columns: .init(repeating: .init(), count: 6), spacing: 16){
+                        ForEach(Binding.constant(icons), id: \.self){ icon in
+                            Button{
+                                self.icon = icon.wrappedValue
+                                showIconPicker = false
+                            } label: {
+                                Image(systemName: icon.wrappedValue)
+                                    .imageScale(.large)
+                                    .frame(width: 32, height: 32)
+                            }
+                            .buttonStyle(.secondary(width: 48, height: 48))
+                        }
+                    }
+                    .padding(32)
+                    Spacer()
+                }
+            }
                 
             Divider()
+            
             Button(action: { save() }){
                 Text("Create".uppercased())
                     .padding(.vertical, 8)
@@ -179,39 +223,7 @@ struct CreateCycleScreen: View {
             .font(.system(size: 16, weight: .bold))
             .frame(maxWidth: .infinity)
                 
-                
             Spacer()
-            //                Form {
-            //                    Section{
-            //                        TextField("Name", text: $name)
-            //                    }
-            //                    Section("Due every"){
-            //                        TextField("Duration", value: $duration, format: .number)
-            //                            .keyboardType(.numberPad)
-            //                        Picker("Type", selection: $type){
-            //                            Text("Days").tag(CyclePeriodType.days)
-            //                            Text("Weeks").tag(CyclePeriodType.weeks)
-            //                            Text("Months").tag(CyclePeriodType.months)
-            //                            Text("Years").tag(CyclePeriodType.years)
-            //                        }
-            //                    }
-            //                    
-            //                    Section("Starts"){
-            //                        DatePicker("In", selection: $startsAt, displayedComponents: .date)
-            //                        Toggle("Repeats", isOn: $repeats)
-            //                    }
-            //                    
-            //                    if(repeats){
-            //                        Section("Repeat"){
-            //                            Picker("Repeat from", selection: $repeatFromLastCompleted){
-            //                                Text("Last Completion").tag(true)
-            //                                Text("Fixed Interval (\(duration) \(type.label()))")
-            //                                    .tag(false)
-            //                            }
-            //                        }
-            //                    }
-            //                }
-            //                Spacer()
         }
         .padding()
         .padding(.top, 32)
@@ -228,7 +240,7 @@ struct PreviewWrapper: View {
     @State private var sheetOpen = true
     
     var body: some View {
-        CreateCycleScreen(sheetOpen: $sheetOpen)
+        CreateCycleView(sheetOpen: $sheetOpen)
             .modelContainer(for: Cycle.self, inMemory: true)
             .tint(.primary)
             .foregroundStyle(Color.foreground)

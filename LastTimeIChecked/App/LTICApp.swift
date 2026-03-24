@@ -12,7 +12,10 @@ import SwiftData
 struct LastTimeICheckedApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            NavigationStack{
+                CycleListView()
+            }
+            .tint(.primary)
         }
         .modelContainer(sharedModelContainer)
     }
