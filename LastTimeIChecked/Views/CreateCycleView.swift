@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import WidgetKit
 
 struct AppTextFieldStyle: TextFieldStyle {
     func _body(configuration: TextField<Self._Label>) -> some View {
@@ -36,6 +37,7 @@ struct CreateCycleView: View {
     @State var showDatePicker = false
     @State var showIconPicker = false
     @State var error: String?
+    @State var pageId: Int? = 0
     
     private let icons: [String] = [
         "house",
@@ -55,7 +57,7 @@ struct CreateCycleView: View {
         if(name.isEmpty){
             error = "Please enter a name"
             return;
-        } else if(duration <= 1){
+        } else if(duration < 1 || (duration == 1 && type == .days)){
             error = "Please enter a valid duration (more than 1)"
             return;
         }
@@ -73,6 +75,7 @@ struct CreateCycleView: View {
         )
         
         modelContext.insert(cycle)
+        
         do{
             try modelContext.save()
         }catch {
@@ -94,8 +97,8 @@ struct CreateCycleView: View {
                     .frame(width: 90)
                     .keyboardType(.numberPad)
                     .contentShape(Rectangle())
-
-                    
+                
+                
                 SelectionView{
                     let options: [CyclePeriodType] = [
                         .days,
@@ -113,14 +116,14 @@ struct CreateCycleView: View {
                 }
                 .frame(height: 36)
                 .frame(maxWidth: .infinity)
-                        
+                
             }
             .tint(.surfaceForeground)
             Divider()
-                
+            
             Text("Starts")
                 .font(.callout.bold())
-                
+            
             HStack(alignment: .center){
                 Button(action: { showDatePicker = true }){
                     Text(
@@ -145,14 +148,14 @@ struct CreateCycleView: View {
                     Text("NOW")
                         .lineLimit(1)
                         .font(.system(size: 14, weight: .bold))
-                            
+                    
                 }
                 .frame(height: 36)
                 .buttonStyle(.primary(height: 36))
-                    
-                    
+                
+                
                 Spacer()
-                    
+                
                 Text("repeats")
                     .font(.callout.bold())
                 Toggle("Repeats", isOn: $repeats)
@@ -170,12 +173,12 @@ struct CreateCycleView: View {
                     .tag(false)
             }.frame(maxWidth: .infinity)
                 .pickerStyle(.palette)
-                
+            
             Divider()
-                
+            
             Text("Customize")
                 .font(.callout.bold())
-                
+            
             HStack {
                 TextField("Name", text: $name)
                     .textFieldStyle(AppTextFieldStyle())
@@ -209,7 +212,8 @@ struct CreateCycleView: View {
                     Spacer()
                 }
             }
-                
+            
+            
             Divider()
             
             Button(action: { save() }){
@@ -222,6 +226,55 @@ struct CreateCycleView: View {
             .foregroundStyle(.white)
             .font(.system(size: 16, weight: .bold))
             .frame(maxWidth: .infinity)
+            
+            Divider()
+            
+            Spacer()
+            
+            GeometryReader{ geo in
+                let screenCenter = geo.size.width / 2
+                let width: CGFloat = geo.size.width * 0.5
+                let padding = geo.size.width - width
+                ScrollViewReader{ proxy in
+                    ScrollView(.horizontal, showsIndicators: false){
+                        LazyHStack(spacing: 16){
+                            ForEach(0..<5, id: \.self){ index in
+                                GeometryReader{geo in
+                                    let frame = geo.frame(in: .global)
+                                    let frameCenter = frame.midX
+                                    let distance = abs(screenCenter - frameCenter)
+                                    let maxDistance = geo.size.width/1.5
+                                    let scale = max(0.8, 1 - (distance/maxDistance) * 0.2)
+                                    
+                                    WidgetPreviewView{
+                                        CycleWidget(entry: CycleTimelineEntry(date: Date(), id: UUID(), icon: icon, percentage: 0.75, label: "In 2 days", name: name))
+                                            .padding()
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .shadow(radius: 16)
+                                    .onTapGesture{
+                                        withAnimation{
+                                            proxy.scrollTo(index, anchor: .leading)
+                                        }
+                                    }
+                                    .scaleEffect(scale)
+                                    .opacity(Double(scale))
+                                    .offset(y: geo.size.height/4 * (1 - scale))
+                                    
+                                }.frame(width: width)
+                                    .id(index)
+                            }
+                        }
+                        .padding(.horizontal, padding/2)
+                        .scrollTargetLayout()
+                    }
+                }
+                    .scrollTargetBehavior(.viewAligned)
+                    .scrollPosition(id: $pageId)
+                    .scrollClipDisabled(true)
+            }
+            
+
                 
             Spacer()
         }

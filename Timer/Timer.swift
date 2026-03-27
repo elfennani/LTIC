@@ -66,84 +66,6 @@ struct Provider: AppIntentTimelineProvider {
     }
 }
 
-struct CycleTimelineEntry: TimelineEntry {
-    let date: Date
-    let id: UUID
-    let icon: String
-    let percentage: Float
-    let label: String
-    let name: String
-}
-
-struct TimerEntryView : View {
-    var entry: Provider.Entry
-
-    var body: some View {
-        VStack {
-            Text(entry.name).font(.caption)
-            
-            ZStack(alignment: .bottom){
-                Canvas{ context, size in
-                    let radius = min(size.width, size.height) - 16
-                    let lineWidth: CGFloat = 16
-                    
-                    let arcBackgroundPath = Path{ path in
-                        path.addRelativeArc(
-                            center: .init(x: size.width / 2, y: size.height),
-                            radius: radius,
-                            startAngle: .degrees(-180),
-                            delta: .degrees(180),
-                        )
-                    }
-                    var arcValuePath = Path()
-                    
-                    arcValuePath.addRelativeArc(
-                        center: .init(x: size.width / 2, y: size.height),
-                        radius: radius,
-                        startAngle: .degrees(-180),
-                        delta: .degrees(Double((180 * entry.percentage))),
-                    )
-                    
-                    context.stroke(
-                        arcBackgroundPath,
-                        with: .color(.primaryDark),
-                        style: .init(
-                            lineWidth: lineWidth,
-                            lineCap: .round
-                        )
-                    )
-                    
-                    context.stroke(
-                        arcValuePath,
-                        with: .color(.primary),
-                        style: .init(
-                            lineWidth: lineWidth,
-                            lineCap: .round
-                        )
-                    )
-                    
-                    let arrow = Path { path in
-                        path.move(to: .init(x: CGFloat(lineWidth - 4), y: size.height))
-                        path.addLine(to: .init(x: CGFloat(lineWidth - 4 + 8), y: size.height - 5))
-                        path.addLine(to: .init(x: CGFloat(lineWidth - 4 + 8), y: size.height + 5))
-                        path.closeSubpath()
-                    }
-                    
-                    let center = CGPoint(x: size.width / 2, y: size.height)
-                    context.translateBy(x: center.x, y: center.y)
-                    context.rotate(by: .degrees(Double((180 * entry.percentage))))
-                    context.translateBy(x: -center.x, y: -center.y)
-                    
-                    context.fill(arrow, with: .color(.primary))
-                }
-                Image(systemName: entry.icon)
-                    .imageScale(.large)
-            }.padding(8)
-            Text("\(entry.label)").font(.caption2)
-        }
-    }
-}
-
 struct Timer: Widget {
     let kind: String = "LTIC Timer"
 
@@ -154,12 +76,13 @@ struct Timer: Widget {
             provider: Provider()
         ) { entry in
             if #available(iOS 17.0, *) {
-                TimerEntryView(entry: entry)
-                    .containerBackground(.widgetBackground, for: .widget)
+                CycleWidget(entry: entry)
+                    .containerBackground(.widgetBackground, for: .widget
+                    )
                     .foregroundColor(.widgetForeground)
                     .modelContainer(sharedModelContainer)
             } else {
-                TimerEntryView(entry: entry)
+                CycleWidget(entry: entry)
                     .padding()
                     .background(.widgetBackground)
                     .foregroundStyle(.widgetForeground)

@@ -44,6 +44,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		D95302152F72FDC800A0EEF1 /* Exceptions for "Timer" folder in "LastTimeIChecked" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Models/CycleTimelineEntry.swift,
+				Views/CycleWidget.swift,
+			);
+			target = D95700FF2F6ED34D00E24667 /* LastTimeIChecked */;
+		};
 		D9C64D142F6EF6C0007A989C /* Exceptions for "Timer" folder in "TimerExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -79,6 +87,7 @@
 		D9C64D042F6EF6BE007A989C /* Timer */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				D95302152F72FDC800A0EEF1 /* Exceptions for "Timer" folder in "LastTimeIChecked" target */,
 				D9C64D142F6EF6C0007A989C /* Exceptions for "Timer" folder in "TimerExtension" target */,
 			);
 			path = Timer;

@@ -103,16 +103,17 @@
       debugDocumentVersioning = "YES"
       askForAppToLaunch = "Yes"
       launchAutomaticallySubstyle = "2">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <RemoteRunnable
+         runnableDebuggingMode = "2"
+         BundleIdentifier = "com.apple.springboard">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D95700FF2F6ED34D00E24667"
-            BuildableName = "LastTimeIChecked.app"
-            BlueprintName = "LastTimeIChecked"
+            BlueprintIdentifier = "D9C64CFD2F6EF6BE007A989C"
+            BuildableName = "TimerExtension.appex"
+            BlueprintName = "TimerExtension"
             ReferencedContainer = "container:LastTimeIChecked.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </RemoteRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
