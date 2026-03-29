@@ -94,7 +94,7 @@ struct GlowLineWidget: View {
                             .offset(x: -6, y: -45)
                             .offset(x: CGFloat(geo.size.width) * CGFloat(entry.percentage), y: 0)
                     }
-                }.frame(height: .infinity)
+                }.frame(maxHeight: .infinity)
             }
             
             Spacer()

@@ -126,7 +126,7 @@ struct CreateCycleView: View {
                 .frame(maxWidth: .infinity)
                 
             }
-            .tint(.surfaceBackground)
+            .tint(.surfaceForeground)
             Divider()
             
             Text("Starts")
@@ -281,13 +281,9 @@ struct CreateCycleView: View {
                     .scrollPosition(id: $pageId)
                     .scrollClipDisabled(true)
             }
-            
-
-                
-            Spacer()
         }
-        .padding()
-        .padding(.top, 32)
+        .padding(16)
+        .padding(.bottom, 56)
         .background(Color(UIColor.white))
     }
     

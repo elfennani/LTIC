@@ -40,27 +40,10 @@ struct Provider: AppIntentTimelineProvider {
         
         for hour in 0..<24 {
             let calendar = Calendar.current
-            let cycle = entryDetails.cycle
-            
-            let from = calendar.startOfDay(for: cycle.startsAt)
             let date = calendar.date(byAdding: .hour, value: hour, to: Date())!
             
-            let distance = calendar.dateComponents([.second], from: from, to: date).second!
-            
-            let percentage = Float(distance % cycle.periodInSeconds()) / Float(cycle.periodInSeconds())
-            let durationTillNext = Int(ceil(Float(cycle.periodInSeconds()) * (1-percentage)))
-            
-            
-            let entry = CycleTimelineEntry(
-                date: date,
-                id: entryDetails.id,
-                icon: cycle.icon,
-                percentage: percentage,
-                label: "In less than \(durationTillNext / 86400) days",
-                name: cycle.name,
-                widget: cycle.widgetType
-            )
-            print("Entry Type: \(cycle.widgetType)")
+            let entry = entryDetails.cycle.toTimelineEntry(date: date)
+            print("Entry Type: \(entryDetails.cycle.widgetType)")
             
             entries.append(entry)
         }

@@ -69,6 +69,8 @@
 				"Extensions/ButtonStyle+Primary.swift",
 				"Extensions/ButtonStyle+Secondary.swift",
 				"Extensions/Color+Primary.swift",
+				"Extensions/Cycle+PeriodInDays.swift",
+				"Extensions/Cycle+TimelineEntryMap.swift",
 				Models/Cycle.swift,
 				Models/CyclePeriodType.swift,
 				"Models/CyclePeriodType+Label.swift",

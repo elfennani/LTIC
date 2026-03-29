@@ -12,25 +12,36 @@ struct CycleListView: View {
     @Query(sort: \Cycle.createdAt) var cycles: [Cycle]
     @State var newCycleSheet: Bool = false
     
-    var body: some View {
-        List(cycles){ cycle in
-            NavigationLink(value: cycle){
-                Text(cycle.name)
-            }
+  var body: some View {
+    ScrollView{
+      LazyVGrid(columns: .init(repeating: .init(spacing: 16), count: 2), spacing: 16){
+        ForEach(cycles){ cycle in
+          NavigationLink(value: cycle){
+            WidgetPreviewView(size: nil){
+              WidgetPicker(entry: cycle.toTimelineEntry())
+                .padding()
+                .shadow(radius: 16)
+            }.aspectRatio(1, contentMode: .fill)
+          }
         }
-        .navigationTitle("My Cycles")
-        .toolbar{
-            ToolbarItem(placement: .topBarTrailing){
-                Button("New",systemImage: "plus",  action: { newCycleSheet = true })
-            }
-        }
-        .sheet(isPresented: $newCycleSheet){
-            CreateCycleView(
-                sheetOpen: $newCycleSheet
-            )
-        }
-        .navigationDestination(for: Cycle.self){ cycle in
-            CycleDetailView(cycle: cycle)
-        }
+      }
+      .padding(16)
     }
+    .navigationTitle("My Cycles")
+    .toolbar{
+      ToolbarItem(placement: .topBarTrailing){
+        Button("New",systemImage: "plus",  action: { newCycleSheet = true })
+      }
+    }
+    .sheet(isPresented: $newCycleSheet){
+      CreateCycleView(
+        sheetOpen: $newCycleSheet
+      )
+    }
+    .navigationDestination(for: Cycle.self){ cycle in
+      ScrollView{
+        CreateCycleView(sheetOpen: .constant(true))
+      }.navigationTitle("Edit Cycle")
+    }
+  }
 }
