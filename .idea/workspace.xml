@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="702ebc59-a7b4-4876-802c-5cbb978e667d" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Timer/Models/WidgetType.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Timer/Widgets/GlowLineWidget.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Timer/Widgets/WidgetPicker.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LastTimeIChecked.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/LastTimeIChecked.xcodeproj/project.pbxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LastTimeIChecked.xcodeproj/xcuserdata/elfennani.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist" beforeDir="false" afterPath="$PROJECT_DIR$/LastTimeIChecked.xcodeproj/xcuserdata/elfennani.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LastTimeIChecked.xcodeproj/xcuserdata/elfennani.xcuserdatad/xcschemes/xcschememanagement.plist" beforeDir="false" afterPath="$PROJECT_DIR$/LastTimeIChecked.xcodeproj/xcuserdata/elfennani.xcuserdatad/xcschemes/xcschememanagement.plist" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LastTimeIChecked/Models/Cycle.swift" beforeDir="false" afterPath="$PROJECT_DIR$/LastTimeIChecked/Models/Cycle.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LastTimeIChecked/Views/Components/WidgetPreviewView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/LastTimeIChecked/Views/Components/WidgetPreviewView.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LastTimeIChecked/Views/CreateCycleView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/LastTimeIChecked/Views/CreateCycleView.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timer/Models/CycleTimelineEntry.swift" beforeDir="false" afterPath="$PROJECT_DIR$/Timer/Models/CycleTimelineEntry.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timer/Timer.swift" beforeDir="false" afterPath="$PROJECT_DIR$/Timer/Timer.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timer/Views/CycleWidget.swift" beforeDir="false" afterPath="$PROJECT_DIR$/Timer/Widgets/FlatArcWidget.swift" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="CopilotPersistence">
+    <persistenceIdMap>
+      <entry key="_/Users/elfennani/Documents/projects/LastTimeIChecked" value="3Bb12WWkIiqVGrxJO54fWeQWoHK" />
+    </persistenceIdMap>
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="iphonesimulator_B97CA45D-976A-4D1B-BA13-46C5406B81A1" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "elfennani"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/elfennani/LTIC.git",
+    "accountId": "e8151ba8-4cff-4eff-be9a-1c3cd539370d"
+  }
+}]]></component>
+  <component name="ProjectApplicationVersion">
+    <option name="ide" value="Studio" />
+    <option name="majorVersion" value="2025" />
+    <option name="microVersion" value="1" />
+    <option name="minorVersion" value="3" />
+    <option name="patchVersion" value="8" />
+    <option name="productBranch" value="Classic" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 1
+}]]></component>
+  <component name="ProjectId" id="3Bb12WWkIiqVGrxJO54fWeQWoHK" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "Xcode Application.LastTimeIChecked.executor": "Run",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/elfennani/Documents/projects/LastTimeIChecked",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "to.speed.mode.migration.done": "true"
+  }
+}]]></component>
+  <component name="RunManager" selected="Xcode Application.LastTimeIChecked">
+    <list>
+      <item itemvalue="Application Extension.TimerExtension" />
+      <item itemvalue="Xcode Application.LastTimeIChecked" />
+    </list>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="702ebc59-a7b4-4876-802c-5cbb978e667d" name="Changes" comment="" />
+      <created>1774742750474</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1774742750474</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="XcodeBuildConfigurationMetadata">
+    <buildConfigurationMetadataMap>
+      <entry key="Xcode Application.LastTimeIChecked">
+        <BuildConfigurationMetadata buildDestinationId="iphonesimulator_B97CA45D-976A-4D1B-BA13-46C5406B81A1" wasRun="true" />
+      </entry>
+    </buildConfigurationMetadataMap>
+  </component>
+  <component name="com.apollographql.ijplugin.settings.ProjectSettingsState">
+    <option name="lspPassPathToSuperGraphYaml" value="false" />
+    <option name="telemetryInstanceId" value="b087d006-d310-4f69-9cc8-2219352c9d1c" />
+  </component>
+  <component name="github-copilot-workspace">
+    <instructionFileLocations>
+      <option value=".github/instructions" />
+    </instructionFileLocations>
+    <promptFileLocations>
+      <option value=".github/prompts" />
+    </promptFileLocations>
+  </component>
+</project>

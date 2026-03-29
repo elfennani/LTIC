@@ -25,7 +25,7 @@ struct ArcShape: Shape {
     }
 }
 
-struct CycleWidget: View {
+struct FlatArcWidget: View {
     var entry: CycleTimelineEntry
     
     var body: some View {

@@ -37,8 +37,7 @@ struct WidgetPreviewView<Content: View>: View {
     
     var body: some View {
         let width = UIScreen.main.bounds.width
-        let size = sizes.min(by: { abs($0.width - width) < abs($1.width - width) })?.widgetSize ?? 0
-        
+        let size: CGFloat = 155
         
         HStack(content: content)
         .frame(width: size, height: size)
@@ -46,19 +45,4 @@ struct WidgetPreviewView<Content: View>: View {
         .foregroundStyle(.widgetForeground)
         .cornerRadius(22)
     }
-    
-    func closestWidgetSize(for width: CGFloat) -> CGSize {
-        // Define standard widget sizes (iPhone example, in points)
-        let widgetSizes: [WidgetFamily: CGSize] = [
-            .systemSmall: CGSize(width: 155, height: 155),
-            .systemMedium: CGSize(width: 329, height: 155),
-            .systemLarge: CGSize(width: 329, height: 345),
-            .systemExtraLarge: CGSize(width: 716, height: 345) // iPad
-        ]
-        
-        // Find the closest width
-        let closest = widgetSizes.min { abs($0.value.width - width) < abs($1.value.width - width) }
-        return closest?.value ?? CGSize(width: width, height: width) // fallback
-    }
-
 }

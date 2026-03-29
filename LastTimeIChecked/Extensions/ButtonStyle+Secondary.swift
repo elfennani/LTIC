@@ -31,5 +31,5 @@ extension ButtonStyle where Self == SecondaryButtonStyle {
     
     static func secondary(width: CGFloat? = nil, height: CGFloat? = nil) -> Self {
         SecondaryButtonStyle(width: width, height: height)
-    }
+    } 
 }

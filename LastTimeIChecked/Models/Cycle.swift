@@ -19,8 +19,9 @@ class Cycle: @unchecked Sendable{
     var repeated: Bool
     var repeatFromLastCompleted: Bool
     var createdAt: Date = Date()
+    var widgetType: WidgetType = WidgetType.flatarc
     
-    init(name: String, icon: String, period: Int, periodType: CyclePeriodType, startsAt: Date, repeated: Bool, repeatFromLastCompleted: Bool) {
+    init(name: String, icon: String, period: Int, periodType: CyclePeriodType, startsAt: Date, repeated: Bool, repeatFromLastCompleted: Bool, widgetType: WidgetType = .flatarc) {
         self.id = UUID()
         self.name = name
         self.icon = icon
@@ -29,6 +30,7 @@ class Cycle: @unchecked Sendable{
         self.startsAt = startsAt
         self.repeated = repeated
         self.repeatFromLastCompleted = repeatFromLastCompleted
+        self.widgetType = widgetType
     }
 }
 

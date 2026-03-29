@@ -52,6 +52,11 @@ struct CreateCycleView: View {
         "camera"
     ]
     
+    private let widgetTypes: [WidgetType] = [
+        .flatarc,
+        .glowline
+    ]
+    
     @MainActor
     func save() {
         if(name.isEmpty){
@@ -64,6 +69,8 @@ struct CreateCycleView: View {
         
         error = nil
         
+        print("page: \(pageId)")
+        
         let cycle = Cycle(
             name: name,
             icon: icon,
@@ -71,7 +78,8 @@ struct CreateCycleView: View {
             periodType: type,
             startsAt: startsAt,
             repeated: repeats,
-            repeatFromLastCompleted: repeatFromLastCompleted
+            repeatFromLastCompleted: repeatFromLastCompleted,
+            widgetType: widgetTypes[pageId ?? 0]
         )
         
         modelContext.insert(cycle)
@@ -118,7 +126,7 @@ struct CreateCycleView: View {
                 .frame(maxWidth: .infinity)
                 
             }
-            .tint(.surfaceForeground)
+            .tint(.surfaceBackground)
             Divider()
             
             Text("Starts")
@@ -238,7 +246,7 @@ struct CreateCycleView: View {
                 ScrollViewReader{ proxy in
                     ScrollView(.horizontal, showsIndicators: false){
                         LazyHStack(spacing: 16){
-                            ForEach(0..<5, id: \.self){ index in
+                            ForEach(Array(widgetTypes.enumerated()), id: \.offset){ index, widgetType in
                                 GeometryReader{geo in
                                     let frame = geo.frame(in: .global)
                                     let frameCenter = frame.midX
@@ -247,7 +255,7 @@ struct CreateCycleView: View {
                                     let scale = max(0.8, 1 - (distance/maxDistance) * 0.2)
                                     
                                     WidgetPreviewView{
-                                        CycleWidget(entry: CycleTimelineEntry(date: Date(), id: UUID(), icon: icon, percentage: 0.75, label: "In 2 days", name: name))
+                                        WidgetPicker(entry: CycleTimelineEntry(date: Date(), id: UUID(), icon: icon, percentage: 0.75, label: "In 2 days", name: name, widget:widgetType))
                                             .padding()
                                     }
                                     .frame(maxWidth: .infinity)
@@ -266,7 +274,7 @@ struct CreateCycleView: View {
                             }
                         }
                         .padding(.horizontal, padding/2)
-                        .scrollTargetLayout()
+                        .scrollTargetLayout() 
                     }
                 }
                     .scrollTargetBehavior(.viewAligned)

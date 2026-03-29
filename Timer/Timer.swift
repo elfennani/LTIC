@@ -17,7 +17,8 @@ struct Provider: AppIntentTimelineProvider {
             icon: "leaf",
             percentage: 0.6,
             label: "In 2 days",
-            name: "Watering plants"
+            name: "Watering plants",
+            widget: .glowline
         )
     }
     
@@ -28,7 +29,8 @@ struct Provider: AppIntentTimelineProvider {
             icon: "leaf",
             percentage: 0.6,
             label: "In 2 days",
-            name: "Watering plants"
+            name: "Watering plants",
+            widget: .flatarc
         )
     }
     
@@ -44,19 +46,21 @@ struct Provider: AppIntentTimelineProvider {
             let date = calendar.date(byAdding: .hour, value: hour, to: Date())!
             
             let distance = calendar.dateComponents([.second], from: from, to: date).second!
-            print("Start: \(from)")
-            print("End: \(date)")
-            let durationTillNext = distance % cycle.periodInSeconds()
-            let percentage = Float(durationTillNext) / Float(cycle.periodInSeconds())
+            
+            let percentage = Float(distance % cycle.periodInSeconds()) / Float(cycle.periodInSeconds())
+            let durationTillNext = Int(ceil(Float(cycle.periodInSeconds()) * (1-percentage)))
+            
             
             let entry = CycleTimelineEntry(
                 date: date,
                 id: entryDetails.id,
                 icon: cycle.icon,
                 percentage: percentage,
-                label: "In \(durationTillNext / 86400) days",
-                name: cycle.name
+                label: "In less than \(durationTillNext / 86400) days",
+                name: cycle.name,
+                widget: cycle.widgetType
             )
+            print("Entry Type: \(cycle.widgetType)")
             
             entries.append(entry)
         }
@@ -76,13 +80,14 @@ struct Timer: Widget {
             provider: Provider()
         ) { entry in
             if #available(iOS 17.0, *) {
-                CycleWidget(entry: entry)
-                    .containerBackground(.widgetBackground, for: .widget
-                    )
+                ZStack{
+                    WidgetPicker(entry: entry)
+                }
+                    .containerBackground(.widgetBackground, for: .widget)
                     .foregroundColor(.widgetForeground)
                     .modelContainer(sharedModelContainer)
             } else {
-                CycleWidget(entry: entry)
+                WidgetPicker(entry: entry)
                     .padding()
                     .background(.widgetBackground)
                     .foregroundStyle(.widgetForeground)
@@ -104,7 +109,8 @@ struct Timer: Widget {
         icon: "leaf",
         percentage: 0.25,
         label: "In 3 days",
-        name: "Workout"
+        name: "Workout",
+        widget: .flatarc
     )
 
     CycleTimelineEntry(
@@ -113,6 +119,7 @@ struct Timer: Widget {
         icon: "leaf",
         percentage: 0.75,
         label: "In 6 hours",
-        name: "Study Session"
+        name: "Study Session",
+        widget: .glowline
     )
 }

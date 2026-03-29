@@ -13,4 +13,5 @@ struct CycleTimelineEntry: TimelineEntry {
     let percentage: Float
     let label: String
     let name: String
+    let widget: WidgetType
 }
