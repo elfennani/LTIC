@@ -9,12 +9,16 @@ import SwiftUI
 import SwiftData
 
 struct CycleListView: View {
-    @Query(sort: \Cycle.createdAt) var cycles: [Cycle]
-    @State var newCycleSheet: Bool = false
+  @Environment(\.modelContext) var context
+  @Query(sort: \Cycle.createdAt) var cycles: [Cycle]
+  @State var newCycleSheet: Bool = false
     
   var body: some View {
     ScrollView{
-      LazyVGrid(columns: .init(repeating: .init(spacing: 16), count: 2), spacing: 16){
+      LazyVGrid(
+        columns: .init(repeating: .init(spacing: 16), count: 2),
+        spacing: 16
+      ){
         ForEach(cycles){ cycle in
           NavigationLink(value: cycle){
             WidgetPreviewView(size: nil){
@@ -34,14 +38,10 @@ struct CycleListView: View {
       }
     }
     .sheet(isPresented: $newCycleSheet){
-      CreateCycleView(
-        sheetOpen: $newCycleSheet
-      )
+      CreateCycleView()
     }
     .navigationDestination(for: Cycle.self){ cycle in
-      ScrollView{
-        CreateCycleView(sheetOpen: .constant(true))
-      }.navigationTitle("Edit Cycle")
+      EditCycleView(cycle: cycle)
     }
   }
 }

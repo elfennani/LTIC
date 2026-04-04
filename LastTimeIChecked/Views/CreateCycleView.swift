@@ -10,296 +10,368 @@ import SwiftData
 import WidgetKit
 
 struct AppTextFieldStyle: TextFieldStyle {
-    func _body(configuration: TextField<Self._Label>) -> some View {
-        configuration
-            .font(.system(size: 14, weight: .bold))
-            .padding(.horizontal)
-            .frame(height: 36)
-            .background(.surface)
-            .foregroundStyle(Color.foreground)
-            .cornerRadius(10)    }
+  func _body(configuration: TextField<Self._Label>) -> some View {
+    configuration
+      .font(.system(size: 14, weight: .bold))
+      .padding(.horizontal)
+      .frame(height: 36)
+      .background(.surface)
+      .foregroundStyle(Color.foreground)
+    .cornerRadius(10)    }
 }
 
 
 struct CreateCycleView: View {
-    @Environment(\.modelContext) var modelContext
+  @Environment(\.modelContext) var modelContext
+  @Environment(\.dismiss) var dismiss
     
-    @Binding var sheetOpen: Bool
+  var cycle: Cycle?
     
-    @State var duration: Int = 1
-    @State var type: CyclePeriodType = CyclePeriodType.days
-    @State var startsAt: Date = Date()
-    @State var repeats: Bool = true
-    @State var repeatFromLastCompleted = true
-    @State var name: String = ""
-    @State var icon: String = "house"
+  @State var duration: Int
+  @State var type: CyclePeriodType
+  @State var startsAt: Date
+  @State var repeats: Bool
+  @State var repeatFromLastCompleted: Bool
+  @State var name: String
+  @State var icon: String
     
-    @State var showDatePicker = false
-    @State var showIconPicker = false
-    @State var error: String?
-    @State var pageId: Int? = 0
+  @State var showDatePicker = false
+  @State var showIconPicker = false
+  @State var error: String?
+  @State var pageId: Int?
     
-    private let icons: [String] = [
-        "house",
-        "person",
-        "gear",
-        "bell",
-        "heart",
-        "star",
-        "bookmark",
-        "message",
-        "calendar",
-        "camera"
-    ]
+  private let icons: [String] = [
+    "house",
+    "person",
+    "gear",
+    "bell",
+    "heart",
+    "star",
+    "bookmark",
+    "message",
+    "calendar",
+    "camera"
+  ]
     
-    private let widgetTypes: [WidgetType] = [
-        .flatarc,
-        .glowline
-    ]
+  private let widgetTypes: [WidgetType] = [
+    .flatarc,
+    .glowline
+  ]
+  
+  init(cycle: Cycle){
+    self.cycle = cycle
+    duration = cycle.period
+    type = cycle.periodType
+    startsAt = cycle.startsAt
+    repeats = cycle.repeated
+    repeatFromLastCompleted = cycle.repeatFromLastCompleted
+    name = cycle.name
+    icon = cycle.icon
+    pageId = widgetTypes.firstIndex(of: cycle.widgetType)
     
-    @MainActor
-    func save() {
-        if(name.isEmpty){
-            error = "Please enter a name"
-            return;
-        } else if(duration < 1 || (duration == 1 && type == .days)){
-            error = "Please enter a valid duration (more than 1)"
-            return;
-        }
+    print("Initialized From Cycle \(cycle.name)")
+  }
+  
+  init(){
+    duration = 1
+    type = CyclePeriodType.days
+    startsAt = Date()
+    repeats = true
+    repeatFromLastCompleted = true
+    name = ""
+    icon = "house"
+  }
+    
+  @MainActor
+  func save() {
+    if(name.isEmpty){
+      error = "Please enter a name"
+      return;
+    } else if(duration < 1 || (duration == 1 && type == .days)){
+      error = "Please enter a valid duration (more than 1)"
+      return;
+    }
         
-        error = nil
+    error = nil
         
-        print("page: \(pageId)")
-        
-        let cycle = Cycle(
-            name: name,
-            icon: icon,
-            period: duration,
-            periodType: type,
-            startsAt: startsAt,
-            repeated: repeats,
-            repeatFromLastCompleted: repeatFromLastCompleted,
-            widgetType: widgetTypes[pageId ?? 0]
-        )
-        
-        modelContext.insert(cycle)
+    print("page: \(pageId)")
+
+    if(self.cycle != nil){
+      print("Editing cycle")
+      guard let cycleId = self.cycle?.id else {
+        error = "Failed to load cycle"
+        return;
+      }
+      let descriptor = FetchDescriptor<Cycle>(
+        predicate: #Predicate { $0.id == cycleId }
+      )
+      if let existingCycle = try? modelContext.fetch(descriptor).first {
+        existingCycle.name = name
+        existingCycle.icon = icon
+        existingCycle.period = duration
+        existingCycle.periodType = type
+        existingCycle.startsAt = startsAt
+        existingCycle.repeated = repeats
+        existingCycle.repeatFromLastCompleted = repeatFromLastCompleted
+        existingCycle.widgetType = widgetTypes[pageId ?? 0]
         
         do{
-            try modelContext.save()
+          try modelContext.save()
+          WidgetCenter.shared.reloadAllTimelines()
         }catch {
-            self.error = "Failed to save cycle"
-            return;
+          self.error = "Failed to save cycle"
+          return;
         }
+      }
+    }else{
+      print("New Cycle Created")
+      let cycle = Cycle(
+        name: name,
+        icon: icon,
+        period: duration,
+        periodType: type,
+        startsAt: startsAt,
+        repeated: repeats,
+        repeatFromLastCompleted: repeatFromLastCompleted,
+        widgetType: widgetTypes[pageId ?? 0]
+      )
+      
+      modelContext.insert(cycle)
+    }
         
-        error = nil
-        sheetOpen.toggle()
+    do{
+      try modelContext.save()
+    }catch {
+      self.error = "Failed to save cycle"
+      return;
     }
+        
+    error = nil
+    dismiss()
+  }
     
-    var body: some View {
-        VStack(alignment:.leading, spacing: 16){
-            Text("Due every")
-                .font(.callout.bold())
-            HStack(spacing: 8){
-                TextField("Duration", value: $duration, format: .number)
-                    .textFieldStyle(AppTextFieldStyle())
-                    .frame(width: 90)
-                    .keyboardType(.numberPad)
-                    .contentShape(Rectangle())
+  var body: some View {
+    VStack(alignment:.leading, spacing: 16){
+      Text("Due every")
+        .font(.callout.bold())
+      HStack(spacing: 8){
+        TextField("Duration", value: $duration, format: .number)
+          .textFieldStyle(AppTextFieldStyle())
+          .frame(width: 90)
+          .keyboardType(.numberPad)
+          .contentShape(Rectangle())
                 
                 
-                SelectionView{
-                    let options: [CyclePeriodType] = [
-                        .days,
-                        .weeks,
-                        .months,
-                        .years
-                    ]
-                    ForEach(options){ cycleType in
-                        SelectionOption(
-                            action: { type = cycleType },
-                            label: cycleType.label(plural: false).uppercased(),
-                            active: type == cycleType
-                        )
-                    }
-                }
-                .frame(height: 36)
-                .frame(maxWidth: .infinity)
-                
-            }
-            .tint(.surfaceForeground)
-            Divider()
-            
-            Text("Starts")
-                .font(.callout.bold())
-            
-            HStack(alignment: .center){
-                Button(action: { showDatePicker = true }){
-                    Text(
-                        startsAt
-                            .formatted(.dateTime.day().month(.twoDigits).year())
-                    )
-                    .lineLimit(1)
-                    .fontDesign(.monospaced)
-                }
-                .buttonStyle(.secondary(height: 36))
-                .sheet(isPresented: $showDatePicker){
-                    DatePicker(
-                        "In",
-                        selection: $startsAt,
-                        displayedComponents: .date
-                    )
-                    .datePickerStyle(.wheel)
-                    .labelsHidden()
-                }
-                
-                Button(action: { startsAt = Date() }){
-                    Text("NOW")
-                        .lineLimit(1)
-                        .font(.system(size: 14, weight: .bold))
-                    
-                }
-                .frame(height: 36)
-                .buttonStyle(.primary(height: 36))
-                
-                
-                Spacer()
-                
-                Text("repeats")
-                    .font(.callout.bold())
-                Toggle("Repeats", isOn: $repeats)
-                    .labelsHidden()
-            }
-            
-            Divider()
-            
-            Text("Repeating from")
-                .font(.callout.bold())
-            
-            Picker("Repeat from", selection: $repeatFromLastCompleted){
-                Text("Last Completion").tag(true)
-                Text("Fixed Interval (\(duration) \(type.label()))")
-                    .tag(false)
-            }.frame(maxWidth: .infinity)
-                .pickerStyle(.palette)
-            
-            Divider()
-            
-            Text("Customize")
-                .font(.callout.bold())
-            
-            HStack {
-                TextField("Name", text: $name)
-                    .textFieldStyle(AppTextFieldStyle())
-                    .frame(width: 190)
-                
-                Spacer()
-                
-                Button(action: { showIconPicker = true }){
-                    HStack{
-                        Image(systemName: icon)
-                        Text(icon.capitalized)
-                    }
-                }
-                .font(.system(size: 14, weight: .bold))
-                .buttonStyle(.primary(height: 36))
-                .sheet(isPresented: $showIconPicker){
-                    LazyVGrid(columns: .init(repeating: .init(), count: 6), spacing: 16){
-                        ForEach(Binding.constant(icons), id: \.self){ icon in
-                            Button{
-                                self.icon = icon.wrappedValue
-                                showIconPicker = false
-                            } label: {
-                                Image(systemName: icon.wrappedValue)
-                                    .imageScale(.large)
-                                    .frame(width: 32, height: 32)
-                            }
-                            .buttonStyle(.secondary(width: 48, height: 48))
-                        }
-                    }
-                    .padding(32)
-                    Spacer()
-                }
-            }
-            
-            
-            Divider()
-            
-            Button(action: { save() }){
-                Text("Create".uppercased())
-                    .padding(.vertical, 8)
-                    .frame(width: 270)
-            }
-            .buttonBorderShape(.roundedRectangle(radius: 10))
-            .buttonStyle(.glassProminent)
-            .foregroundStyle(.white)
-            .font(.system(size: 16, weight: .bold))
-            .frame(maxWidth: .infinity)
-            
-            Divider()
-            
-            Spacer()
-            
-            GeometryReader{ geo in
-                let screenCenter = geo.size.width / 2
-                let width: CGFloat = geo.size.width * 0.5
-                let padding = geo.size.width - width
-                ScrollViewReader{ proxy in
-                    ScrollView(.horizontal, showsIndicators: false){
-                        LazyHStack(spacing: 16){
-                            ForEach(Array(widgetTypes.enumerated()), id: \.offset){ index, widgetType in
-                                GeometryReader{geo in
-                                    let frame = geo.frame(in: .global)
-                                    let frameCenter = frame.midX
-                                    let distance = abs(screenCenter - frameCenter)
-                                    let maxDistance = geo.size.width/1.5
-                                    let scale = max(0.8, 1 - (distance/maxDistance) * 0.2)
-                                    
-                                    WidgetPreviewView{
-                                        WidgetPicker(entry: CycleTimelineEntry(date: Date(), id: UUID(), icon: icon, percentage: 0.75, label: "In 2 days", name: name, widget:widgetType))
-                                            .padding()
-                                    }
-                                    .frame(maxWidth: .infinity)
-                                    .shadow(radius: 16)
-                                    .onTapGesture{
-                                        withAnimation{
-                                            proxy.scrollTo(index, anchor: .leading)
-                                        }
-                                    }
-                                    .scaleEffect(scale)
-                                    .opacity(Double(scale))
-                                    .offset(y: geo.size.height/4 * (1 - scale))
-                                    
-                                }.frame(width: width)
-                                    .id(index)
-                            }
-                        }
-                        .padding(.horizontal, padding/2)
-                        .scrollTargetLayout() 
-                    }
-                }
-                    .scrollTargetBehavior(.viewAligned)
-                    .scrollPosition(id: $pageId)
-                    .scrollClipDisabled(true)
-            }
+        SelectionView{
+          let options: [CyclePeriodType] = [
+            .days,
+            .weeks,
+            .months,
+            .years
+          ]
+          ForEach(options){ cycleType in
+            SelectionOption(
+              action: { type = cycleType },
+              label: cycleType.label(plural: false).uppercased(),
+              active: type == cycleType
+            )
+          }
         }
-        .padding(16)
-        .padding(.bottom, 56)
-        .background(Color(UIColor.white))
+        .frame(height: 36)
+        .frame(maxWidth: .infinity)
+                
+      }
+      .tint(.surfaceForeground)
+      Divider()
+            
+      Text("Starts")
+        .font(.callout.bold())
+            
+      HStack(alignment: .center){
+        Button(action: { showDatePicker = true }){
+          Text(
+            startsAt
+              .formatted(.dateTime.day().month(.twoDigits).year())
+          )
+          .lineLimit(1)
+          .fontDesign(.monospaced)
+        }
+        .buttonStyle(.secondary(height: 36))
+        .sheet(isPresented: $showDatePicker){
+          DatePicker(
+            "In",
+            selection: $startsAt,
+            displayedComponents: .date
+          )
+          .datePickerStyle(.wheel)
+          .labelsHidden()
+        }
+                
+        Button(action: { startsAt = Date() }){
+          Text("NOW")
+            .lineLimit(1)
+            .font(.system(size: 14, weight: .bold))
+                    
+        }
+        .frame(height: 36)
+        .buttonStyle(.primary(height: 36))
+                
+                
+        Spacer()
+                
+        Text("repeats")
+          .font(.callout.bold())
+        Toggle("Repeats", isOn: $repeats)
+          .labelsHidden()
+      }
+            
+      Divider()
+            
+      Text("Repeating from")
+        .font(.callout.bold())
+            
+      Picker("Repeat from", selection: $repeatFromLastCompleted){
+        Text("Last Completion").tag(true)
+        Text("Fixed Interval (\(duration) \(type.label()))")
+          .tag(false)
+      }.frame(maxWidth: .infinity)
+        .pickerStyle(.palette)
+            
+      Divider()
+            
+      Text("Customize")
+        .font(.callout.bold())
+            
+      HStack {
+        TextField("Name", text: $name)
+          .textFieldStyle(AppTextFieldStyle())
+          .frame(width: 190)
+                
+        Spacer()
+                
+        Button(action: { showIconPicker = true }){
+          HStack{
+            Image(systemName: icon)
+            Text(icon.capitalized)
+          }
+        }
+        .font(.system(size: 14, weight: .bold))
+        .buttonStyle(.primary(height: 36))
+        .sheet(isPresented: $showIconPicker){
+          LazyVGrid(columns: .init(repeating: .init(), count: 6), spacing: 16){
+            ForEach(Binding.constant(icons), id: \.self){ icon in
+              Button{
+                self.icon = icon.wrappedValue
+                showIconPicker = false
+              } label: {
+                Image(systemName: icon.wrappedValue)
+                  .imageScale(.large)
+                  .frame(width: 32, height: 32)
+              }
+              .buttonStyle(.secondary(width: 48, height: 48))
+            }
+          }
+          .padding(32)
+          Spacer()
+        }
+      }
+            
+            
+      Divider()
+            
+      Button(action: { save() }){
+        Text((cycle == nil ? "Create" : "Update").uppercased())
+          .padding(.vertical, 8)
+          .frame(width: 270)
+      }
+      .buttonBorderShape(.roundedRectangle(radius: 10))
+      .buttonStyle(.glassProminent)
+      .foregroundStyle(.white)
+      .font(.system(size: 16, weight: .bold))
+      .frame(maxWidth: .infinity)
+            
+      Divider()
+            
+      Spacer()
+            
+      GeometryReader{ geo in
+        let screenCenter = geo.size.width / 2
+        let width: CGFloat = geo.size.width * 0.5
+        let padding = geo.size.width - width
+        ScrollViewReader{ proxy in
+          ScrollView(.horizontal, showsIndicators: false){
+            HStack(spacing: 16){
+              ForEach(
+                Array(widgetTypes.enumerated()),
+                id: \.offset
+              ){
+                index,
+                widgetType in
+                GeometryReader{geo in
+                  let frame = geo.frame(in: .named("HorizontalPager"))
+                  let frameCenter = frame.midX
+                  let distance = abs(screenCenter - frameCenter)
+                  let maxDistance = geo.size.width/1.5
+                  let scale = max(0.8, 1 - (distance/maxDistance) * 0.2)
+                                    
+                  WidgetPreviewView{
+                    WidgetPicker(
+                      entry: CycleTimelineEntry(
+                        date: Date(),
+                        id: UUID(),
+                        icon: icon,
+                        percentage: 0.75,
+                        label: "In 2 days",
+                        name: name,
+                        widget:widgetType
+                      )
+                    )
+                    .padding()
+                  }
+                  .frame(maxWidth: .infinity)
+                  .shadow(radius: 16)
+                  .onTapGesture{
+                    withAnimation{
+                      proxy.scrollTo(index, anchor: .leading)
+                    }
+                  }
+                  .scaleEffect(scale)
+                  .opacity(Double(scale))
+                  .offset(y: geo.size.height/4 * (1 - scale))
+                }.frame(width: width)
+                  .id(index)
+              }
+            }
+            .frame(height: 220)
+            .padding(.horizontal, padding/2)
+            .scrollTargetLayout() 
+          }
+          .coordinateSpace(.named("HorizontalPager"))
+        }
+        .scrollTargetBehavior(.viewAligned)
+        .scrollPosition(id: $pageId)
+        .scrollClipDisabled(true)
+      }
     }
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .padding(16)
+    .padding(.bottom, 56)
+    .background(Color(UIColor.white))
+  }
     
 }
 
 #Preview {
-    PreviewWrapper()
+  PreviewWrapper()
 }
 
 struct PreviewWrapper: View {
-    @State private var sheetOpen = true
+  @State private var sheetOpen = true
     
-    var body: some View {
-        CreateCycleView(sheetOpen: $sheetOpen)
-            .modelContainer(for: Cycle.self, inMemory: true)
-            .tint(.primary)
-            .foregroundStyle(Color.foreground)
-    }
+  var body: some View {
+    CreateCycleView()
+      .modelContainer(for: Cycle.self, inMemory: true)
+      .tint(.primary)
+      .foregroundStyle(Color.foreground)
+  }
 }
